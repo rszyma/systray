@@ -46,7 +46,11 @@ type MenuItem interface {
 	Show()
 	String() string
 	Uncheck()
+
+	id() uint32
 }
+
+var _ MenuItem = (*menuItem)(nil)
 
 // menuItem is used to keep track each menu item of systray.
 // Don't create it directly, use the one systray.AddMenuItem() returned
@@ -54,8 +58,8 @@ type menuItem struct {
 	// ClickedCh is the channel which will be notified when the menu item is clicked
 	clickedCh chan struct{}
 
-	// id uniquely identify a menu item, not supposed to be modified
-	id uint32
+	// id_ uniquely identify a menu item, not supposed to be modified
+	id_ uint32
 	// title is the text shown on menu item
 	title string
 	// tooltip is the text shown when pointing to menu item
@@ -67,21 +71,26 @@ type menuItem struct {
 	// has the menu item a checkbox (Linux)
 	isCheckable bool
 	// parent item, for sub menus
-	parent *menuItem
+	parent MenuItem
+}
+
+// id implements MenuItem.
+func (item *menuItem) id() uint32 {
+	return item.id_
 }
 
 func (item *menuItem) String() string {
 	if item.parent == nil {
-		return fmt.Sprintf("MenuItem[%d, %q]", item.id, item.title)
+		return fmt.Sprintf("MenuItem[%d, %q]", item.id_, item.title)
 	}
-	return fmt.Sprintf("MenuItem[%d, parent %d, %q]", item.id, item.parent.id, item.title)
+	return fmt.Sprintf("MenuItem[%d, parent %d, %q]", item.id_, item.parent.id(), item.title)
 }
 
 // newMenuItem returns a populated MenuItem object
-func newMenuItem(title string, tooltip string, parent *menuItem) *menuItem {
+func newMenuItem(title string, tooltip string, parent MenuItem) *menuItem {
 	return &menuItem{
 		clickedCh:   make(chan struct{}),
-		id:          atomic.AddUint32(&currentID, 1),
+		id_:         atomic.AddUint32(&currentID, 1),
 		title:       title,
 		tooltip:     tooltip,
 		disabled:    false,
@@ -241,7 +250,7 @@ func (item *menuItem) Uncheck() {
 // update propagates changes on a menu item to systray
 func (item *menuItem) update() {
 	menuItemsLock.Lock()
-	menuItems[item.id] = item
+	menuItems[item.id_] = item
 	menuItemsLock.Unlock()
 	addOrUpdateMenuItem(item)
 }

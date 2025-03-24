@@ -58,10 +58,10 @@ func addOrUpdateMenuItem(item *menuItem) {
 	}
 	var parentID uint32 = 0
 	if item.parent != nil {
-		parentID = item.parent.id
+		parentID = item.parent.id()
 	}
 	C.add_or_update_menu_item(
-		C.int(item.id),
+		C.int(item.id_),
 		C.int(parentID),
 		C.CString(item.title),
 		C.CString(item.tooltip),
@@ -77,13 +77,13 @@ func addSeparator(id uint32) {
 
 func hideMenuItem(item *menuItem) {
 	C.hide_menu_item(
-		C.int(item.id),
+		C.int(item.id_),
 	)
 }
 
 func showMenuItem(item *menuItem) {
 	C.show_menu_item(
-		C.int(item.id),
+		C.int(item.id_),
 	)
 }
 
