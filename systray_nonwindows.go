@@ -1,4 +1,6 @@
+//go:build !windows
 // +build !windows
+
 // go:build !windows
 
 package systray
@@ -41,7 +43,7 @@ func SetTooltip(tooltip string) {
 	C.setTooltip(C.CString(tooltip))
 }
 
-func addOrUpdateMenuItem(item *MenuItem) {
+func addOrUpdateMenuItem(item *menuItem) {
 	var disabled C.short
 	if item.disabled {
 		disabled = 1
@@ -73,13 +75,13 @@ func addSeparator(id uint32) {
 	C.add_separator(C.int(id))
 }
 
-func hideMenuItem(item *MenuItem) {
+func hideMenuItem(item *menuItem) {
 	C.hide_menu_item(
 		C.int(item.id),
 	)
 }
 
-func showMenuItem(item *MenuItem) {
+func showMenuItem(item *menuItem) {
 	C.show_menu_item(
 		C.int(item.id),
 	)

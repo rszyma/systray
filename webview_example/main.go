@@ -19,11 +19,11 @@ func onReady() {
 	go func() {
 		for {
 			select {
-			case <-mShowLantern.ClickedCh:
+			case <-mShowLantern.ClickedCh():
 				showWebview("https://www.getlantern.org")
-			case <-mShowWikipedia.ClickedCh:
+			case <-mShowWikipedia.ClickedCh():
 				showWebview("https://www.wikipedia.org")
-			case <-mQuit.ClickedCh:
+			case <-mQuit.ClickedCh():
 				systray.Quit()
 			}
 		}

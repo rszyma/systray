@@ -25,7 +25,7 @@ func onReady() {
 	systray.SetTooltip("Lantern")
 	mQuitOrig := systray.AddMenuItem("Quit", "Quit the whole app")
 	go func() {
-		<-mQuitOrig.ClickedCh
+		<-mQuitOrig.ClickedCh()
 		fmt.Println("Requesting quit")
 		systray.Quit()
 		fmt.Println("Finished quitting")
@@ -77,11 +77,11 @@ func onReady() {
 
 		for {
 			select {
-			case <-mChange.ClickedCh:
+			case <-mChange.ClickedCh():
 				mChange.SetTitle("I've Changed")
-			case <-mAllowRemoval.ClickedCh:
+			case <-mAllowRemoval.ClickedCh():
 				systray.SetRemovalAllowed(true)
-			case <-mChecked.ClickedCh:
+			case <-mChecked.ClickedCh():
 				if mChecked.Checked() {
 					mChecked.Uncheck()
 					mChecked.SetTitle("Unchecked")
@@ -89,18 +89,18 @@ func onReady() {
 					mChecked.Check()
 					mChecked.SetTitle("Checked")
 				}
-			case <-mEnabled.ClickedCh:
+			case <-mEnabled.ClickedCh():
 				mEnabled.SetTitle("Disabled")
 				mEnabled.Disable()
-			case <-mUrl.ClickedCh:
+			case <-mUrl.ClickedCh():
 				open.Run("https://www.getlantern.org")
-			case <-subMenuBottom2.ClickedCh:
+			case <-subMenuBottom2.ClickedCh():
 				panic("panic button pressed")
-			case <-subMenuBottom.ClickedCh:
+			case <-subMenuBottom.ClickedCh():
 				toggle()
-			case <-mToggle.ClickedCh:
+			case <-mToggle.ClickedCh():
 				toggle()
-			case <-mQuit.ClickedCh:
+			case <-mQuit.ClickedCh():
 				systray.Quit()
 				fmt.Println("Quit2 now...")
 				return
